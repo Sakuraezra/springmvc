@@ -13,8 +13,9 @@
     http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
  
     <!--
- 默认的注解映射的支持 -->
+ 默认的注解映射的支持  (将静态文件指定到某个特殊的文件夹中统一处理)--> 
     <mvc:annotation-driven />
+    <mvc:resources location="/resources/" mapping="/resources/**"/>
     <!--启用自动扫描 
  -->
     <context:component-scan base-package="zttc.itat.controller"
@@ -23,4 +24,23 @@
          <property name="prefix" value="/WEB-INF/view/" />
     	 <property name="suffix" value=".jsp" />
     </bean>
+ 
+    <!-- 全局异常 -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">  
+    <!-- 为所有的异常定义默认的异常处理页面，exceptionMappings未定义的异常使用本默认配置  
+    <property name="defaultErrorView" value="error"></property>  
+   		 定义异常处理页面用来获取异常信息的变量名，默认名为exception 
+    <property name="exceptionAttribute" value="ex"></property>  
+   
+　　　　定义需要特殊处理的异常，用类名或完全路径名作为key，异常页文件名作为值，
+　　　　将不同的异常映射到不同的页面上。
+　　 -->  
+    <property name="exceptionMappings">  
+        <props>  
+        	<prop key="zttc.itat.model.UserException">error</prop>
+            <prop key="IOException">error/ioexp</prop>  
+            <prop key="java.sql.SQLException">error/sqlexp</prop>  
+        </props>  
+    </property>  
+</bean> 
 </beans>

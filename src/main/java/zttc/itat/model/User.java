@@ -1,9 +1,10 @@
 package zttc.itat.model;
 
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Range;
 public class User {
 	private String username;
 	private String password;
@@ -17,20 +18,20 @@ public class User {
 	public String getUsername(){
 		return username;
 	}
-	public String getNickname() {
-		return nickname;
+	public void setUsername(String username) {
+		this.username = username;
 	}
+	
 	
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 	
-
-	public void setUsername(String username) {
-		this.username = username;
+	public String getNickname() {
+		return nickname;
 	}
-	
-	@Range(min=1,max=10,message="密码的长度应该在1-10之间")
+
+	@Size(min=1,max=10,message="密码的长度应该在1-10之间")
 	public String getPassword() {
 		return password;
 	}

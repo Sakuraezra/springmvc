@@ -6,16 +6,20 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>用户列表</title>
+
+<link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/main.css" type="text/css">
 </head>
 <body>
-<a href="add">添加</a>
 <br>
+<a href="add">添加</a><br>  ---${loginUser.nickname}
+
 	 <c:forEach items="${users}" var ="um" >
 	 ${um.value.username} 
-	 ${um.value.password} 
-	 ${um.value.nickname} 
-	 ${um.value.email} 
-	 <br>
-	  </c:forEach>
+----<a href="${um.value.username}">${um.value.nickname}</a>
+---- ${um.value.password} 
+---- ${um.value.email} 
+	 <a href="${um.value.username}/update">修改</a>
+	  <a href="${um.value.username}/delete">删除</a><br>
+	  </c:forEach>	
 </body>
 </html>
