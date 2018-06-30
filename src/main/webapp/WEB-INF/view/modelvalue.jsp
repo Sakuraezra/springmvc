@@ -8,6 +8,6 @@
 <title>hello.jsp</title>
 </head>
 <body>
-    ${msg}
+    ${username}
 </body>
 </html>
