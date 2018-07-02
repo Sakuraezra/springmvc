@@ -10,12 +10,16 @@
 
 <!-- 此时没有写action，直接提交给/add>  -->
 <!--  br 服务器端验证 -->
-<sf:form method ="post" modelAttribute="user">
-	Username:<sf:input path ="username"/><sf:errors path="username"/><br>
-	Password:<sf:password path="password"/><sf:errors path="password"/><br>
-	Nickname:<sf:input path="nickname"/><br>
-	Email:	<sf:input path="email"/><sf:errors path="email"/><br>
-	<input type="submit" value="添加用户"><br>
+<sf:form method ="post" modelAttribute="user" enctype="multipart/form-data">
+	Username:<sf:input path ="username"/><sf:errors path="username"/><br/>
+	Password:<sf:password path="password"/><sf:errors path="password"/><br/>
+	Nickname:<sf:input path="nickname"/><br/>
+	Email:	<sf:input path="email"/><sf:errors path="email"/><br/>
+	Attach:<input type="file" name="attachs"><br/>	
+	Attach:<input type="file" name="attachs"><br/>	
+	Attach:<input type="file" name="attachs"><br/>	
+			
+	<input type="submit" value="添加用户"><br/>
 </sf:form>
 </body>
 </html>

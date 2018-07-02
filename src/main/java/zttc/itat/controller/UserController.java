@@ -1,10 +1,14 @@
 package zttc.itat.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +17,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import zttc.itat.model.*;
 
@@ -34,17 +41,43 @@ public class UserController {
 		return "user/list";
 	}
 
-
-	@RequestMapping(value="/add",method = RequestMethod.POST)
-	public String add(@Validated User user,BindingResult br) {
-		if(br.hasErrors()) {
-			//如果有错误直接跳转回add
+	// 传一组文件 mutipartfile改为数组  由于用了数组，无法自动转换。需要添加@Requestparam 
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public String add(@Validated User user, BindingResult br, @RequestParam("attachs")MultipartFile[] attachs, HttpServletRequest req)
+			throws IOException {
+		if (br.hasErrors()) {
+			// 如果有错误直接跳转回add
 			return "user/add";
 		}
-		users.put(user.getUsername(),user);		
-		return "redirect:/user/users";	
+		String realpath = req.getSession().getServletContext().getRealPath("/resource/uploda");
+		System.out.println(realpath);
+		for (MultipartFile attach : attachs) {
+			if(attach.isEmpty())continue;
+			File f = new File(realpath + "/" + attach.getOriginalFilename());
+			FileUtils.copyInputStreamToFile(attach.getInputStream(), f);
+			System.out.println(
+					attach.getName() + "," + attach.getOriginalFilename() + "," + "," + attach.getContentType());
+		}
+		users.put(user.getUsername(), user);
+		return "redirect:/user/users";
 	}
-	
+
+	// @RequestMapping(value="/add",method = RequestMethod.POST)
+	// public String add(@Validated User user,BindingResult br,MultipartFile
+	// attach,HttpServletRequest req) throws IOException{
+	// if(br.hasErrors()) {
+//			//如果有错误直接跳转回add
+//			return "user/add";
+//		}
+//		String realpath = req.getSession().getServletContext().getRealPath("/resource/uploda");
+//		System.out.println(realpath);
+//		File f = new File(realpath+"/"+attach.getOriginalFilename());
+//		FileUtils.copyInputStreamToFile(attach.getInputStream(), f);
+//		System.out.println(attach.getName()+","+attach.getOriginalFilename()+","+","+attach.getContentType());
+//		users.put(user.getUsername(),user);		
+//		return "redirect:/user/users";	
+//	}
+//	
 	//get请求 进行跳转页面
 	@RequestMapping(value="/add",method = RequestMethod.GET)
 	public String add(Model model) {
@@ -63,6 +96,14 @@ public class UserController {
 		model.addAttribute(users.get(username));
 		return "user/show";
 	}
+	
+
+	@RequestMapping(value="/{username}",method = RequestMethod.GET,params="json")
+	@ResponseBody
+	public  User show(@PathVariable String username){	
+		return users.get(username);
+	}
+
 
 	@RequestMapping(value="/{username}/update",method = RequestMethod.GET)
 	public String update(@PathVariable String username ,Model model) {

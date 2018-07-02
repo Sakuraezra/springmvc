@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+         <hibernate-mapping>
+        	 <class name="zttc.itat.model.User" table="ssh"> 
+        	 	<!-- 配置属性 -->
+        	 	<id name="sid" column="sid">
+        	 	<!-- 增长策略 -->
+    	     	<generator class="native"></generator>  
+     	 	</id>
+        	 	<property name="username"  column="username"  ></property>   
+        	 	<property name="password"  column="password" ></property>   
+              	<property name="nickname"  column="nickname" ></property>     	 	      	 	
+       	 	    <property name="email"    column="email" ></property>     	 	        	 	     
+        	 </class>
+</hibernate-mapping>

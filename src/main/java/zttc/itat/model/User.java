@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 public class User {
+	private Integer sid;
 	private String username;
 	private String password;
 	private String nickname;
@@ -13,7 +14,14 @@ public class User {
 	public User() {
 		
 	}
-	
+	public Integer getSid() {
+		return sid;
+	}
+
+	public void setSid(Integer sid) {
+		this.sid = sid;
+	}
+
 	@NotEmpty(message="用户名不能为空")
 	public String getUsername(){
 		return username;
