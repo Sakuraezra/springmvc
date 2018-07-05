@@ -15,36 +15,38 @@ import zttc.itat.model.SystemContext;
 
 public class SystemContextFilter implements Filter {
 
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
+    @Override
+    public void destroy() {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
-			throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		int offset = 0;
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+            throws IOException, ServletException {
+        // TODO Auto-generated method stub
+        int offset = 0;
 
-		try {
-			offset = Integer.parseInt(req.getParameter("pager.offset"));
-		} catch (NumberFormatException e) {
-		}
-		try {
-			SystemContext.setOffset(offset);
-			SystemContext.setSize(15);
-		} finally {
-			SystemContext.removeOffset();
-			SystemContext.removeSize();
-		}
+        try {
+            offset = Integer.parseInt(req.getParameter("pager.offset"));
+        } catch (NumberFormatException e) {
+        }
+        try {
+            SystemContext.setOffset(offset);
+            SystemContext.setSize(15);
+            //此处代码必须要加,需要看一下filter的原理
+            chain.doFilter(req, resp);
+        } finally {
+            SystemContext.removeOffset();
+            SystemContext.removeSize();
+        }
 
-	}
+    }
 
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
+    @Override
+    public void init(FilterConfig arg0) throws ServletException {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
 }

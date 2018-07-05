@@ -3,7 +3,7 @@
 "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
          <hibernate-mapping>
-        	 <class name="zttc.itat.model.User" table="ssh"> 
+        	 <class name="zttc.itat.model.User" table="mvcuser"> 
         	 	<!-- 配置属性 -->
         	 	<id name="sid" column="sid">
         	 	<!-- 增长策略 -->

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,12 +23,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import zttc.itat.model.*;
+import zttc.itat.service.IUserService;
+import zttc.itat.service.UserService;
 
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	private Map<String, User> users = new HashMap<String, User>();
+
+	private IUserService UserService;
+	
+	
+	@RequestMapping(value="/users",method=RequestMethod.GET)
+	public String list(Model model)
+	{
+		model.addAttribute("pagers",UserService.find());
+		return "user/list";
+	}
+	/*	private Map<String, User> users = new HashMap<String, User>();
+
+	@RequestMapping(value="/welcome",method= RequestMethod.GET)
+	public String welcome() {
+			return "index";
+		}
+
 	
 	public UserController() {
 		users.put("xxx", new User("xxx", "123", "ezra", "no1"));
@@ -145,6 +164,17 @@ public class UserController {
 			return "redirect:/user/users";
 	}
 	
+*/
+
+
+	public IUserService getUserService() {
+		return UserService;
+	}
+
+
+	public void setUserService(IUserService userService) {
+		UserService = userService;
+	}
 	
 	/**
 	 * 局部异常,只能处理控制器中的异常

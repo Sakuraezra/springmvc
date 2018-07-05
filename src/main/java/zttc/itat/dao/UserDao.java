@@ -3,11 +3,11 @@ package zttc.itat.dao;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.From;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateTemplate;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import zttc.itat.model.Pager;
@@ -16,11 +16,14 @@ import zttc.itat.model.User;
 
 @Repository("userDao")
 public class UserDao extends HibernateDaoSupport implements IUserDao {
-
-	@Resource
+	private HibernateTemplate hibernateTemplate;
+	List<User> userlist = null;
+	
+	@Resource(name = "sessionFactory")
 	public void setSuperSessionFactory(SessionFactory sessionFactory){
 			this.setSessionFactory(sessionFactory);
 	}
+	
 	@Override
 	public void add(User user) {
 		// TODO Auto-generated method stub
@@ -48,9 +51,11 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 
 	@Override
 	public List<User> list() {
-		return this.getSession().createQuery("from User").list();
+		userlist = (List<User>) hibernateTemplate.find("from User");
+		System.out.println(userlist.toString());
+		return userlist;
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pager<User> find() {
@@ -73,5 +78,17 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 		// TODO Auto-generated method stub
 		return (User) this.getSession().createQuery("from User where username=?").setParameter(0,username).uniqueResult();
 	}
+*/
 
+	@Override
+	public Pager<User> find() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User loadByUsername(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
