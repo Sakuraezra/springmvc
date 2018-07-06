@@ -1,3 +1,5 @@
+/*
+
 package zttc.itat.model;
 
 public class SystemContext {
@@ -25,3 +27,5 @@ public class SystemContext {
 		size.remove();
 	}
 }
+
+*/

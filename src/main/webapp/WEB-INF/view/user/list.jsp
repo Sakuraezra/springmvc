@@ -11,7 +11,9 @@
 </head>
 <body>
 <br>
+
 <a href="add">添加</a><br>  ---${loginUser.nickname}
+<!-- 
 <table width = "700" align="center" border="1">
 	<tr>
 	<td>用户标识</td><td>用户名</td><td>用户昵称</td><td>密码</td><td>邮箱</td>
@@ -43,15 +45,25 @@
 	</c:if>
 
 	</table>
+	 -->
+
+	<table width = "700" align="center" border="1">
 	
-	<!--  <c:forEach items="${users}" var ="um" >
-	 ${um.value.username} 
-----<a href="${um.value.username}">${um.value.nickname}</a>
----- ${um.value.password} 
----- ${um.value.email} 
-	 <a href="${um.value.username}/update">修改</a>
-	  <a href="${um.value.username}/delete">删除</a><br>
-	  </c:forEach>	 -->
+	<tr>
+	<td>用户标识</td><td>用户名</td><td>用户昵称</td><td>密码</td><td>邮箱</td>
+	</tr>
+	 <c:forEach items="${users}" var ="user" >
+	<tr>
+	<td>${user.username} </td> 
+	<td><a href="${user.username}">${user.nickname}</a></td> 
+	<td> ${user.password} </td> 
+ 	<td>	${user.email} </td> 
+	 <td> <a href="${user.username}/update">修改</a> </td> 
+ 	<td>	  <a href="${user.username}/delete">删除</a><br></td> 
+	</tr>
+	 </c:forEach>	 
+		
+	  </table>
 	  
 	  
 </body>

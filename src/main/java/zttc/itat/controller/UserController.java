@@ -1,20 +1,24 @@
 package zttc.itat.controller;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
-import org.omg.CORBA.PUBLIC_MEMBER;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,26 +26,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import zttc.itat.model.*;
+import zttc.itat.model.User;
+import zttc.itat.model.UserException;
 import zttc.itat.service.IUserService;
-import zttc.itat.service.UserService;
 
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-	private IUserService UserService;
+	private IUserService userService;
 	
-	
-	@RequestMapping(value="/users",method=RequestMethod.GET)
-	public String list(Model model)
-	{
-		model.addAttribute("pagers",UserService.find());
-		return "user/list";
+	private Integer currentPage;
+	private List<User> userlist = null;
+	public Integer getCurrentPage() {
+		return currentPage;
 	}
-	/*	private Map<String, User> users = new HashMap<String, User>();
 
+	private Map<String, User> users = new HashMap<String, User>();
+
+	public void setCurrentPage(Integer currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	
+	@RequestMapping(value="/pages",method=RequestMethod.GET)
+	public String list( )
+	{		
+		System.out.println(currentPage);		
+	//	model.addAttribute("pageBean",UserService.listPage(currentPage));
+	//	model.addAttribute("pagers",UserService.findPage());
+		userService.listPage(currentPage);
+		return "user/pager";
+	}
+	
+	
+
+	
 	@RequestMapping(value="/welcome",method= RequestMethod.GET)
 	public String welcome() {
 			return "index";
@@ -49,6 +70,7 @@ public class UserController {
 
 	
 	public UserController() {
+		currentPage = 1;
 		users.put("xxx", new User("xxx", "123", "ezra", "no1"));
 		users.put("hhh", new User("hhh", "123", "mark", "no2"));
 		users.put("www", new User("www", "123", "zzz", "no3"));
@@ -56,10 +78,28 @@ public class UserController {
 
 	@RequestMapping(value="/users",method = RequestMethod.GET)
 	public String list(Model model) {	
-		model.addAttribute("users",users);
+	
+		model.addAttribute("users",	userService.list());	
 		return "user/list";
 	}
-
+	
+	// 传一组文件 mutipartfile改为数组  由于用了数组，无法自动转换。需要添加@Requestparam 
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public String add(@Validated User user, BindingResult br)
+			throws IOException {
+		if (br.hasErrors()) {
+			// 如果有错误直接跳转回add
+			return "user/add";
+		}
+		System.out.println(user.toString());
+	
+		userService.add(user);
+	
+		users.put(user.getUsername(), user);
+		return "redirect:/user/users";
+	}
+	
+/*
 	// 传一组文件 mutipartfile改为数组  由于用了数组，无法自动转换。需要添加@Requestparam 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String add(@Validated User user, BindingResult br, @RequestParam("attachs")MultipartFile[] attachs, HttpServletRequest req)
@@ -80,7 +120,7 @@ public class UserController {
 		users.put(user.getUsername(), user);
 		return "redirect:/user/users";
 	}
-
+*/
 	// @RequestMapping(value="/add",method = RequestMethod.POST)
 	// public String add(@Validated User user,BindingResult br,MultipartFile
 	// attach,HttpServletRequest req) throws IOException{
@@ -100,7 +140,7 @@ public class UserController {
 	//get请求 进行跳转页面
 	@RequestMapping(value="/add",method = RequestMethod.GET)
 	public String add(Model model) {
-		model.addAttribute(new User());
+		model.addAttribute(new User());	
 		return "user/add";
 	}
 //	get请求 进行跳转页面
@@ -113,6 +153,7 @@ public class UserController {
 	@RequestMapping(value="/{username}",method = RequestMethod.GET)
 	public String show(@PathVariable String username,Model model){
 		model.addAttribute(users.get(username));
+		
 		return "user/show";
 	}
 	
@@ -131,7 +172,9 @@ public class UserController {
 		return "user/update";
 	}
 
-
+	
+	
+/*
 	@RequestMapping(value="/{username}/update",method = RequestMethod.POST)
 		public String update(@PathVariable String username, @Validated User user, BindingResult br) {	
 		System.out.println(users.get(username).toString());
@@ -143,10 +186,25 @@ public class UserController {
 		users.put(username, user);
 		return "redirect:/user/users";
 	}
+*/
+	@RequestMapping(value="/{username}/update",method = RequestMethod.POST)
+	public String update(@PathVariable String username, @Validated User user, BindingResult br) {	
+	System.out.println(users.get(username).toString());
+	if(br.hasErrors()) {
+		//如果有错误直接跳转回add
+		return "user/update";
+	}
+	userService.update(user);
+	System.out.println(users.get(username).toString());
+	users.put(username, user);
+	return "redirect:/user/users";
+}
 
+	
 	@RequestMapping(value="/{username}/delete",method = RequestMethod.GET)
 	public String delete(@PathVariable String username){
 		users.remove(username);	
+	//	userService.delete(id);
 		return "redirect:/user/users";
 	}
 
@@ -164,16 +222,16 @@ public class UserController {
 			return "redirect:/user/users";
 	}
 	
-*/
+
 
 
 	public IUserService getUserService() {
-		return UserService;
+		return userService;
 	}
 
-
+	@Resource
 	public void setUserService(IUserService userService) {
-		UserService = userService;
+		this.userService = userService;
 	}
 	
 	/**

@@ -15,10 +15,10 @@
 	Password:<sf:password path="password"/><sf:errors path="password"/><br/>
 	Nickname:<sf:input path="nickname"/><br/>
 	Email:	<sf:input path="email"/><sf:errors path="email"/><br/>
+<!-- 	Attach:<input type="file" name="attachs"><br/>	
 	Attach:<input type="file" name="attachs"><br/>	
 	Attach:<input type="file" name="attachs"><br/>	
-	Attach:<input type="file" name="attachs"><br/>	
-			
+ -->			
 	<input type="submit" value="添加用户"><br/>
 </sf:form>
 </body>

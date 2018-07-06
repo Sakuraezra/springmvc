@@ -4,19 +4,22 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import zttc.itat.model.Pager;
-import zttc.itat.model.SystemContext;
 import zttc.itat.model.User;
 
 @Repository("userDao")
-public class UserDao extends HibernateDaoSupport implements IUserDao {
-	private HibernateTemplate hibernateTemplate;
+@Transactional
+
+  public class UserDao extends HibernateDaoSupport implements IUserDao {
+	
+ 
+private HibernateTemplate hibernateTemplate;
 	List<User> userlist = null;
 	
 	@Resource(name = "sessionFactory")
@@ -24,10 +27,12 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 			this.setSessionFactory(sessionFactory);
 	}
 	
+	
 	@Override
 	public void add(User user) {
 		// TODO Auto-generated method stub
 			this.getHibernateTemplate().save(user);
+			//hibernateTemplate.save(user);
 	}
 
 	@Override
@@ -39,19 +44,20 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 	@Override
 	public void delete(int id) {
 		// TODO Auto-generated method stub
-			User user = this.load(id);
+			User user = (User) this.load(id);
 			this.getHibernateTemplate().delete(user);
 	}
 
 	@Override
-	public User load(int id) {
+	public List<User> load(int id) {
 		// TODO Auto-generated method stub
-			return (User) this.getHibernateTemplate().load(User.class,id);
+			return (List<User>) this.getHibernateTemplate().load(User.class,id);
 	}
 
 	@Override
 	public List<User> list() {
-		userlist = (List<User>) hibernateTemplate.find("from User");
+	//	userlist = (List<User>) hibernateTemplate.find("from User");
+		userlist = (List<User>) this.getHibernateTemplate().find("from User");
 		System.out.println(userlist.toString());
 		return userlist;
 	}
@@ -73,22 +79,39 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 		us.setTotal(total);	
 		return us;
 	}
+*/	
+	
 	@Override
 	public User loadByUsername(String username) {
 		// TODO Auto-generated method stub
-		return (User) this.getSession().createQuery("from User where username=?").setParameter(0,username).uniqueResult();
-	}
-*/
-
-	@Override
-	public Pager<User> find() {
-		// TODO Auto-generated method stub
-		return null;
+		return (User)this.getSessionFactory().getCurrentSession().createQuery("from User where username=?").setParameter(0,username).uniqueResult();
+	//	return  (User) hibernateTemplate.find("from User where username = ? " ,username);
 	}
 
+	
 	@Override
-	public User loadByUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
+	public int findCount() {
+		
+		List<Object> list =(List<Object>)hibernateTemplate.find("select count(*) from User");
+		if(list!=null && list.size()!=0)
+		{
+		Object obj=list.get(0);
+		Long logj=(Long)obj;
+		int count = logj.intValue();
+		return count;
+		}
+		return 0;
 	}
+
+	
+	
+	public List<User> findPage(int begin, int pageSize) {
+		//使用离线对象		
+		DetachedCriteria criteria =DetachedCriteria.forClass(User.class);		
+		List<User> list =(List<User>) hibernateTemplate.findByCriteria(criteria,begin,pageSize);
+		return list;
+	}
+
+	
+	
 }
