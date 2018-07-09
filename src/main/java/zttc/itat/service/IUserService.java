@@ -12,5 +12,5 @@ public interface IUserService {
 	public List<User> load(int id);
 	public List<User> list();	
 	public User login(String username,String password);
-	public PageBean listPage(Integer currentPage);
+	public PageBean<User> queryForPage(int currentPage, int pageSize);
 }

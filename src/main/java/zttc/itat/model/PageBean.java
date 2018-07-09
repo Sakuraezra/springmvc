@@ -1,68 +1,102 @@
 package zttc.itat.model;
-
 import java.util.List;
 
-public class PageBean {
-	//当前页
-	private Integer currentPage;
-	//总记录数
-	private Integer totalCount;
-	//每页记录数
-	private Integer pageSize;
-	//总页数
-	private Integer totalPage;
-	//开始位置
-	private Integer begin;
-	//每页记录list集合
-	private List<User> list;
+public class PageBean<User> {
+    // 结果集
+    private List<User> list;
 
-	public Integer getCurrentPage() {
-		return currentPage;
-	}
+    // 查询记录总数
+    private int totalRecords;
 
-	public void setCurrentPage(Integer currentPage) {
-		this.currentPage = currentPage;
-	}
+    // 每页多少条记录
+    private int pageSize;
 
-	public Integer getTotalCount() {
-		return totalCount;
-	}
+    // 第几页
+    private int pageNo;
+    
+    /**
+     * @return 总页数
+     * */
+    public int getTotalPages(){
+        return (totalRecords+pageSize-1)/pageSize;
+    }
+    
+    /**
+     * 计算当前页开始记录
+     * @param pageSize 每页记录数
+     * @param currentPage 当前第几页
+     * @return 当前页开始记录号
+     */
+    public int countOffset(int currentPage,int pageSize){
+        int offset = pageSize*(currentPage-1);
+        return offset;
+    }
+    
+    /**
+     * @return 首页
+     * */
+    public int getTopPageNo(){
+        return 1;
+    }
+    
+    /**
+     * @return 上一页
+     * */
+    public int getPreviousPageNo(){
+        if(pageNo<=1){
+            return 1;
+        }
+        return pageNo-1;
+    }
+    
+    /**
+     * @return 下一页
+     * */
+    public int getNextPageNo(){
+        if(pageNo>=getBottomPageNo()){
+            return getBottomPageNo();
+        }
+        return pageNo+1;
+    }
+    
+    /**
+     * @return 尾页
+     * */
+    public int getBottomPageNo(){
+        return getTotalPages();
+    }
+    
+    
+    public List<User> getList() {
+        return list;
+    }
 
-	public void setTotalCount(Integer totalCount) {
-		this.totalCount = totalCount;
-	}
+    public void setList(List<User> list) {
+        this.list = list;
+    }
 
-	public Integer getPageSize() {
-		return pageSize;
-	}
+    public int getTotalRecords() {
+        return totalRecords;
+    }
 
-	public void setPageSize(Integer pageSize) {
-		this.pageSize = pageSize;
-	}
+    public void setTotalRecords(int totalRecords) {
+        this.totalRecords = totalRecords;
+    }
 
-	public Integer getTotalPage() {
-		return totalPage;
-	}
+    public int getPageSize() {
+        return pageSize;
+    }
 
-	public void setTotalPage(Integer totalPage) {
-		this.totalPage = totalPage;
-	}
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
-	public Integer getBegin() {
-		return begin;
-	}
+    public int getPageNo() {
+        return pageNo;
+    }
 
-	public void setBegin(Integer begin) {
-		this.begin = begin;
-	}
+    public void setPageNo(int pageNo) {
+        this.pageNo = pageNo;
+    }
 
-	public List<User> getList() {
-		return list;
-	}
-
-	public void setList(List<User> list) {
-		this.list = list;
-	}
-	
-	
 }

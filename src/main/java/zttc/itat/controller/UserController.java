@@ -1,8 +1,6 @@
 package zttc.itat.controller;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
-import java.io.File;
+import java.io.Console;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -10,22 +8,20 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.jasper.tagplugins.jstl.core.Out;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
+import zttc.itat.model.PageBean;
 import zttc.itat.model.User;
 import zttc.itat.model.UserException;
 import zttc.itat.service.IUserService;
@@ -38,7 +34,6 @@ public class UserController {
 	private IUserService userService;
 	
 	private Integer currentPage;
-	private List<User> userlist = null;
 	public Integer getCurrentPage() {
 		return currentPage;
 	}
@@ -50,16 +45,24 @@ public class UserController {
 	}
 
 	
-	@RequestMapping(value="/pages",method=RequestMethod.GET)
-	public String list( )
-	{		
-		System.out.println(currentPage);		
-	//	model.addAttribute("pageBean",UserService.listPage(currentPage));
-	//	model.addAttribute("pagers",UserService.findPage());
-		userService.listPage(currentPage);
-		return "user/pager";
-	}
-	
+	@RequestMapping(value="/pages.do",method=RequestMethod.GET)
+    public String findAllCourse(HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            String pageNo = request.getParameter("pageNo");
+            if (pageNo == null) {
+                pageNo = "1";               
+            }                       
+           System.out.println(pageNo);       
+            PageBean<User> pageBean = userService.queryForPage(Integer.parseInt(pageNo),10);
+            request.setAttribute("pageBean", pageBean);
+            List<User> course = pageBean.getList();
+            request.setAttribute("courses", course);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "user/pages";
+    }
 	
 
 	
@@ -91,10 +94,8 @@ public class UserController {
 			// 如果有错误直接跳转回add
 			return "user/add";
 		}
-		System.out.println(user.toString());
-	
-		userService.add(user);
-	
+		System.out.println(user.toString());	
+		userService.add(user);	
 		users.put(user.getUsername(), user);
 		return "redirect:/user/users";
 	}

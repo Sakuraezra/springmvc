@@ -1,9 +1,11 @@
 package zttc.itat.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.orm.hibernate4.HibernateTemplate;
@@ -90,9 +92,9 @@ private HibernateTemplate hibernateTemplate;
 
 	
 	@Override
-	public int findCount() {
-		
-		List<Object> list =(List<Object>)hibernateTemplate.find("select count(*) from User");
+	public int findCount() {		
+	// List<Object> list =(List<Object>)hibernateTemplate.find("select count(*) from User");
+		List<Object> list = (List<Object>) this.getHibernateTemplate().find("select count(*) from User");
 		if(list!=null && list.size()!=0)
 		{
 		Object obj=list.get(0);
@@ -103,15 +105,26 @@ private HibernateTemplate hibernateTemplate;
 		return 0;
 	}
 
-	
-	
-	public List<User> findPage(int begin, int pageSize) {
-		//使用离线对象		
-		DetachedCriteria criteria =DetachedCriteria.forClass(User.class);		
-		List<User> list =(List<User>) hibernateTemplate.findByCriteria(criteria,begin,pageSize);
-		return list;
-	}
-
-	
-	
+	/**
+     * 分页查询
+     * @param hql 查询的条件
+     * @param offset 开始记录
+     * @param pageSize 一次查询几条记录
+     * @return 返回查询记录集合
+     */
+	@SuppressWarnings("unchecked")
+	public List<User> queryForPage(int offset, int pageSize) {
+	        // TODO Auto-generated method stub
+	        List<User> entitylist= new ArrayList<User>();
+	        try{
+	            Query query = this.getSessionFactory().getCurrentSession().createQuery("from User");
+	            query.setFirstResult(offset);
+	            query.setMaxResults(pageSize);
+	            entitylist = query.list();
+	            
+	        }catch(RuntimeException re){
+	            throw re;
+	        }       
+	        return entitylist;
+	    }		
 }

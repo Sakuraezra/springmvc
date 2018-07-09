@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import zttc.itat.dao.IUserDao;
+import zttc.itat.dao.UserDao;
 import zttc.itat.model.PageBean;
 import zttc.itat.model.User;
 import zttc.itat.model.UserException;
@@ -74,37 +75,33 @@ public class UserService implements IUserService {
 		if(!u.getPassword().equals(password))throw new UserException("用户密码不正确");
 		return u;
 	}
+	/**
+     * 分页查询 
+     * @param currentPage 当前页号：现在显示的页数
+     * @param pageSize 每页显示的记录条数
+     * @return 封闭了分页信息(包括记录集list)的Bean
+     * */
 
-	
+    @Override
+    public PageBean<User> queryForPage(int currentPage,int pageSize) {
+        // TODO Auto-generated method stub
+    	PageBean<User> page = new PageBean<User>();        
+        //总记录数
+        int allRow = userDao.findCount();
+        //当前页开始记录
+        int offset = page.countOffset(currentPage,pageSize);  
+        //分页查询结果集
+        
+    
+        
+        List<User> list = userDao.queryForPage(offset, pageSize); 
 
-	public PageBean listPage(Integer currentPage) {
-		//创建PageBean 对象
-		PageBean pageBean = new PageBean();
-		//当前页
-		pageBean.setCurrentPage(currentPage);
-		//总记录数
-		int totalCount = userDao.findCount();
-		pageBean.setTotalCount(totalCount);		
-		//每页显示记录数
-		int pageSize = 3;
-		int totalpage = 0;
-		//总页数    ==  总记录数/每页记录数
-		if(totalCount%pageSize==0)
-		{
-			totalpage = totalCount/pageSize;
-		}else{
-			totalpage=totalCount/pageSize+1;
-		}	
-		pageBean.setTotalPage(totalpage);
-		//开视位置
-		int begin=(currentPage-1)*pageSize;
-		//每页记录list
-		List<User> list = userDao.findPage(begin,pageSize);
-		pageBean.setList(list);
-				
-		return pageBean;
-		
-		
-	}
+        page.setPageNo(currentPage);
+        page.setPageSize(pageSize);
+        page.setTotalRecords(allRow);
+        page.setList(list);
+        
+        return page;
+    }
 
 }

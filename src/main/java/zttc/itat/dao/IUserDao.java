@@ -10,7 +10,7 @@ public interface IUserDao {
 	public void delete(int id);
 	public List<User> load(int id);
 	public List<User> list();
-	public List<User> findPage(int begin, int pageSize);
+	public List<User> queryForPage(int begin, int pageSize);
 	public User loadByUsername(String username);
 	public int findCount();
 }
